@@ -15,8 +15,8 @@ To reproduce the bug on Mac OS:
 1. Run `./run.sh`
 1. Connect to `http://localhost:8080/example/example/`
 1. Notice the animated loading indicator spins indefinitely (much longer than 1 second)
-    1. You can get it to finish by clicking it, someimes switching browser tabs, etc.
-1. Press the "Search" button repeatedly
-1. Now it consistently takes only 1 second to load (which is correct)
+    1. You can get it to finish by clicking it, sometimes switching browser tabs, etc.
+1. Press the "Search" button repeatedly to trigger new load cycles
+1. After the first load, it consistently takes only 1 second to load (which is correct)
 
 To repeat the failure scenario (longer than 1 second load time), just reload the browser tab.
