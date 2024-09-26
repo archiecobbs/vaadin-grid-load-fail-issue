@@ -1,5 +1,5 @@
 # vaadin-grid-load-fail-issue
-Demonstration test case for Vaadin bug
+Demonstration test case for Vaadin bug https://github.com/vaadin/flow/issues/20069
 
 Bug scenario:
 
