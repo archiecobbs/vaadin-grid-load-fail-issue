@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration monitorInterval="30">
+
+    <Appenders>
+
+        <RollingFile name="mylog"
+          fileName="/tmp/vaadin-flow-issue-16775.log"
+          filePattern="/tmp/vaadin-flow-issue-16775.log.%03i.gz">
+            <ThresholdFilter level="TRACE"/>
+            <PatternLayout>
+                <Pattern>%d{DEFAULT} [%t] %-5p: %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="50 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="50" fileIndex="min"/>
+        </RollingFile>
+
+    </Appenders>
+
+    <Loggers>
+
+        <Logger name="org.apache.commons" level="info"/>
+        <Logger name="org.springframework" level="info"/>
+        <Logger name="org.springframework.http" level="info"/>
+        <Logger name="org.springframework.web" level="info"/>
+        <Logger name="org.atmosphere" level="debug"/>
+        <Logger name="com.vaadin.flow.server.BootstrapHandler" level="info"/>
+        <Logger name="com.vaadin.flow.server.communication" level="info"/>
+
+        <Root level="debug">
+            <AppenderRef ref="mylog"/>
+        </Root>
+    </Loggers>
+
+</Configuration>

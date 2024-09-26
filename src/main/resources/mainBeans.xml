@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:task="http://www.springframework.org/schema/task"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xsi:schemaLocation="
+   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+   http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+<!--
+    This XML file defines beans that should only be instantiated in the MAIN application context.
+-->
+
+    <!-- Activate Spring annotation support -->
+    <context:annotation-config/>
+
+    <!-- Activate @Configurable -->
+    <context:spring-configured/>
+
+    <!-- What-to-do-when-queue-full policy -->
+    <bean id="rejectedExecutionAbort" class="java.util.concurrent.ThreadPoolExecutor.AbortPolicy"/>
+
+    <!-- Define our primary task executor and scheduler -->
+    <bean id="primaryTaskExecutor" class="com.example.support.LoggingThreadPoolTaskExecutor"
+      p:corePoolSize="16" p:maxPoolSize="32" p:queueCapacity="10000" p:rejectedExecutionHandler-ref="rejectedExecutionAbort"/>
+    <bean id="primaryTaskScheduler" class="com.example.support.LoggingThreadPoolTaskScheduler"
+      p:poolSize="8"/>
+
+    <!-- Define a secondary task executor and scheduler for less important stuff (e.g., GUI tasks) -->
+    <bean id="secondaryTaskExecutor" class="com.example.support.LoggingThreadPoolTaskExecutor"
+      p:corePoolSize="16" p:maxPoolSize="32" p:queueCapacity="10000" p:rejectedExecutionHandler-ref="rejectedExecutionAbort"/>
+    <bean id="secondaryTaskScheduler" class="com.example.support.LoggingThreadPoolTaskScheduler"
+      p:poolSize="8"/>
+
+    <!-- Other @Component beans -->
+    <context:component-scan base-package="com.example"/>
+
+    <!-- GUI: Vaadin annotation-based config beans -->
+    <context:component-scan base-package="com.vaadin.flow.spring">
+        <context:exclude-filter type="regex" expression="com\.vaadin\.flow\.spring\.security\..*"/>
+        <context:exclude-filter type="regex" expression="com\.vaadin\.flow\.spring\.SpringBootAutoConfiguration"/>
+        <context:exclude-filter type="regex" expression="com\.vaadin\.flow\.spring\.SpringSecurityAutoConfiguration"/>
+    </context:component-scan>
+
+</beans>

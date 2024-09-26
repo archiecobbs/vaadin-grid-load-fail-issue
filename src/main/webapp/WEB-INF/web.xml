@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+  version="3.0">
+
+    <display-name>vaadin-flow-issue-16775</display-name>
+    <description>vaadin-flow-issue-16775</description>
+
+    <!-- See https://cwiki.apache.org/confluence/display/TOMCAT/Character+Encoding -->
+    <request-character-encoding>UTF-8</request-character-encoding>
+
+    <!-- Cleanup listeners -->
+    <listener>
+        <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextCleanupListener</listener-class>
+    </listener>
+
+    <!-- Spring context loader -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!-- Spring DispatcherServlet -->
+    <servlet>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>/ws/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- Vaadin servlet -->
+    <servlet>
+        <servlet-name>ISSUE16775</servlet-name>
+        <servlet-class>com.vaadin.flow.server.VaadinServlet</servlet-class>
+        <init-param>
+            <param-name>productionMode</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <!--
+            If "heartbeatInterval" is defined, UI's are deemed "inactive" and automatically
+            closed (via UI.close()) after (3.1 * heartbeatInterval) with no heartbeat received.
+            This is important so that UI's can be cleaned up if a user just closes the tab.
+            Otherwise, UI's would stay "active" until explicitly closed by the code.
+
+            If "closeIdleSessions" is true, then VaadinSession's are deemed "inactive" and
+            closed after HttpSession.getMaxInactiveInterval() seconds with no UIDL requests
+            received (heartbeats don't count here). So this means if you UI's open but don't
+            do anything for HttpSession.getMaxInactiveInterval() seconds, then the Vaadin
+            session will be closed. This provides typical "idle timeout" behavior.
+        -->
+        <init-param>
+            <param-name>closeIdleSessions</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <param-name>heartbeatInterval</param-name>
+            <param-value>193</param-value><!-- every 3.22 min, so a UI has 10 minutes to reappear -->
+        </init-param>
+        <async-supported>true</async-supported>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ISSUE16775</servlet-name>
+        <url-pattern>/example/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- Session config -->
+    <session-config>
+        <tracking-mode>COOKIE</tracking-mode>
+        <!-- This value (in minutes) needs to be greater than heartbeatInterval (in seconds) -->
+        <session-timeout>60</session-timeout>
+    </session-config>
+
+</web-app>
