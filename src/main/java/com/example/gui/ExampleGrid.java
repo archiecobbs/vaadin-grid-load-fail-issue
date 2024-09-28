@@ -40,7 +40,8 @@ public class ExampleGrid extends Grid<Integer> implements Connectable {
               .setKey(String.format("col%d", col))
               .setFlexGrow(1)
               .setHeader(String.format("Col %d", col))
-              .setWidth("100px");
+              .setWidth("100px")
+              /*.setVisible(i % 3 != 2)*/;
         }
 
         // Connect data provider when attached, disconnect data provider when detached

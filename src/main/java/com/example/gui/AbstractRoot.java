@@ -11,6 +11,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.Unit;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Span;
@@ -52,6 +53,8 @@ public abstract class AbstractRoot extends VerticalLayout implements BeforeEnter
 
     @Autowired
     protected ConsoleApplication consoleApplication;
+
+    protected boolean loggedIn;
 
     private final AtomicBoolean initialized = new AtomicBoolean();
     private final VerticalLayout bottomLayout = new VerticalLayout();
@@ -154,7 +157,7 @@ public abstract class AbstractRoot extends VerticalLayout implements BeforeEnter
             this.init(request);
 
         // Update lower panel if needed
-        this.updateLowerPanel(ui);
+        this.updateLowerPanel();
     }
 
     private void handleDetach() {
@@ -220,6 +223,10 @@ public abstract class AbstractRoot extends VerticalLayout implements BeforeEnter
         layout.add(logoLayout);
         layout.add(titleLayout);
         layout.setFlexGrow(1.0f, titleLayout);
+        layout.add(new Button("Logout", e -> {
+            this.loggedIn = false;
+            VaadinUtil.accessCurrentSession(this::updateLowerPanel);
+        }));
         return layout;
     }
 
@@ -234,10 +241,7 @@ public abstract class AbstractRoot extends VerticalLayout implements BeforeEnter
     /**
      * Rebuild and update the lower panel.
      */
-    protected void updateLowerPanel(UI ui) {
-
-        // Sanity check
-        Preconditions.checkArgument(ui != null, "null ui");
+    protected void updateLowerPanel() {
 
         // The user is authorized; build the normal lower panel
         final Component content = this.buildRootLowerPanel();

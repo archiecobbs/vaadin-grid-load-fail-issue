@@ -6,9 +6,12 @@
 package com.example.gui;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+
+import org.dellroad.stuff.vaadin24.util.VaadinUtil;
 
 @Route("")
 @SuppressWarnings("serial")
@@ -30,8 +33,13 @@ public class MainRoot extends AbstractRoot {
         layout.setSizeFull();
 
         // Add example
-        final ExamplePanel panel = new ExamplePanel();
-        layout.add(panel);
+        if (!this.loggedIn) {
+            layout.add(new Button("Login", e -> {
+                this.loggedIn = true;
+                VaadinUtil.accessCurrentSession(this::updateLowerPanel);
+            }));
+        } else
+            layout.add(new ExamplePanel());
 
         // Done
         return layout;

@@ -25,6 +25,7 @@ import org.springframework.core.task.AsyncTaskExecutor;
 @Configurable
 public class ExampleDataProvider extends AsyncDataProvider<Integer> implements Connectable {
 
+    private static final int NUM_DATA_ROWS = 500;
     private static final long SLEEP_TIME = 1000;        // 1.0 sec
 
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -61,8 +62,8 @@ public class ExampleDataProvider extends AsyncDataProvider<Integer> implements C
         this.log.debug("reload sleeping for {}ms...", SLEEP_TIME);
         Thread.sleep(SLEEP_TIME);       // pretend to be working hard...
         this.log.debug("reload wokeup after {}ms...", SLEEP_TIME);
-        final int start = (int)id * 100;
-        return IntStream.range(start, start + 100).mapToObj(Integer::valueOf);
+        final int start = (int)id * NUM_DATA_ROWS;
+        return IntStream.range(start, start + NUM_DATA_ROWS).mapToObj(Integer::valueOf);
     }
 
 // AsyncDataProvider overrides
