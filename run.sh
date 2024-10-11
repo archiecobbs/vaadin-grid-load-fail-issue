@@ -5,6 +5,7 @@ set -ex
 
 # Constants
 TOMCAT_NAME='tomcat@10'
+LOG_FILE="/tmp/vaadin-flow-issue-16775.log"
 
 # This only works on MacOS with tomcat 10 installed via brew
 if [ `uname -s` != 'Darwin' ]; then
@@ -32,4 +33,5 @@ WAR=`find target -maxdepth 1 -name 'example-webapp-*.war' | xargs /bin/ls -1t | 
 ln -f "${WAR}" "${TOMCAT_ROOT}/libexec/webapps/example.war"
 
 # Show logs
-tail -F /tmp/vaadin-flow-issue-16775.log
+touch "${LOG_FILE}"
+tail -F "${LOG_FILE}"

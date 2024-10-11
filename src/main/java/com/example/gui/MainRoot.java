@@ -10,8 +10,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-
-import org.dellroad.stuff.vaadin24.util.VaadinUtil;
+import com.vaadin.flow.server.VaadinSession;
 
 @Route("")
 @SuppressWarnings("serial")
@@ -36,7 +35,10 @@ public class MainRoot extends AbstractRoot {
         if (!this.loggedIn) {
             layout.add(new Button("Login", e -> {
                 this.loggedIn = true;
-                VaadinUtil.accessCurrentSession(this::updateLowerPanel);
+                final VaadinSession session = VaadinSession.getCurrent();
+
+                // Ensure there's no UI.getCurrent() when updateLowerPanel() runs...
+                new Thread(() -> session.accessSynchronously(this::updateLowerPanel)).start();
             }));
         } else
             layout.add(new ExamplePanel());

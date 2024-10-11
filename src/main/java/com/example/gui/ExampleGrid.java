@@ -8,6 +8,8 @@ package com.example.gui;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 
 import org.dellroad.stuff.vaadin24.util.AsyncTaskStatusChangeEvent;
 import org.slf4j.Logger;
@@ -36,12 +38,12 @@ public class ExampleGrid extends Grid<Integer> implements Connectable {
         // Configure grid
         for (int i = 0; i < 10; i++) {
             final int col = i + 1;
-            this.addColumn(row -> String.format("Row %d, Col %d", row, col))
+            this.addColumn(
+               new ComponentRenderer<Span, Integer>(row -> new Span(String.format("Row %d, Col %d", row, col))))
               .setKey(String.format("col%d", col))
               .setFlexGrow(1)
               .setHeader(String.format("Col %d", col))
-              .setWidth("100px")
-              /*.setVisible(i % 3 != 2)*/;
+              .setWidth("100px");
         }
 
         // Connect data provider when attached, disconnect data provider when detached
