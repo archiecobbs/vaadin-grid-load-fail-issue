@@ -1,5 +1,7 @@
 # vaadin-grid-load-fail-issue
-Demonstration test case for Vaadin bug https://github.com/vaadin/flow/issues/20069
+Demonstration test case for Vaadin Flow bugs #20240 and #6349
+
+### [Bug #20240](https://github.com/vaadin/flow/issues/20240)
 
 Bug scenario:
 
@@ -20,3 +22,22 @@ To reproduce the bug on Mac OS:
 1. After the first load, it consistently takes only 1 second to load (which is correct)
 
 To repeat the failure scenario (longer than 1 second load time), just reload the browser tab.
+
+### [Bug #6349](https://github.com/vaadin/flow/issues/6349)
+
+Bug scenario:
+
+1. `UI.getCurrent()` returns the wrong value
+
+To reproduce the bug on Mac OS:
+
+1. You need to have `tomcat@10` installed via `brew`
+1. Run `mvn clean package`
+1. Run `./run.sh`
+1. Open browser tab #1 to `http://localhost:8080/example/example/other`
+    1. It should say "This is the first toot"
+1. Open browser tab #2 to `http://localhost:8080/example/example/other`
+    1. It should say "This is not the first toot"
+1. Press the button on broswer tab #1
+1. Press the button on broswer tab #2
+1. Browser tab #2 will show "My current UI" to be the "actual UI" for tab #1
