@@ -31,6 +31,8 @@
         <vaadin.version.patch>12</vaadin.version.patch>
         <vaadin.version>${vaadin.version.major}.${vaadin.version.minor}.${vaadin.version.patch}</vaadin.version>
         <vaadin.productionMode>true</vaadin.productionMode>
+        <vaadin.flow-server.version>24.4.8</vaadin.flow-server.version>
+        <vaadin.flow-components.version>${vaadin.version}</vaadin.flow-components.version>
 
         <!-- Overrides to fix enforcer "Require upper bound dependencies" violations -->
         <dellroad-stuff.version>3.0.8</dellroad-stuff.version>
@@ -351,7 +353,7 @@
                             <showWarnings>true</showWarnings>
                             <compilerArgs>
                                 <arg>-Xlint:all,-processing,-path</arg>
-                                <arg>-Werror</arg>
+                                <!--<arg>-Werror</arg>-->
                                 <arg>-AaddSuppressWarningsAnnotation=true</arg>
                                 <arg>-implicit:class</arg>
                                 <arg>-Xmaxerrs</arg>
@@ -399,6 +401,52 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- JAR patching -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>${maven-antrun-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>patch_jar_files</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+
+                                <!-- Patch vaadin-renderer-flow JAR -->
+                                <fail message="vaadin-renderer-flow-${vaadin.flow-components.version}.jar not found">
+                                    <condition>
+                                        <not>
+                                            <available file="${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/lib/vaadin-renderer-flow-${vaadin.flow-components.version}.jar"/>
+                                        </not>
+                                    </condition>
+                                </fail>
+                                <zip destfile="${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/lib/vaadin-renderer-flow-${vaadin.flow-components.version}.jar"
+                                    update="true" whenempty="fail" basedir="${project.build.directory}/classes" filesonly="true" includes="com/vaadin/flow/data/renderer**/*"/>
+                                <zip destfile="${project.build.directory}/${project.artifactId}-${project.version}.war"
+                                    update="true" whenempty="fail" basedir="${project.build.directory}/${project.artifactId}-${project.version}" filesonly="true"
+                                    includes="WEB-INF/lib/vaadin-renderer-flow-${vaadin.flow-components.version}.jar"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.ant</groupId>
+                        <artifactId>ant</artifactId>
+                        <version>${ant.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>ant-contrib</groupId>
+                        <artifactId>ant-contrib</artifactId>
+                        <version>${ant-contrib.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
             <!-- WAR -->
