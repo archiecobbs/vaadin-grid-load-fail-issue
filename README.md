@@ -1,7 +1,7 @@
 # vaadin-grid-load-fail-issue
 Demonstration test case for Vaadin Flow bug #6849
 
-### [Bug #6849](https://github.com/vaadin/flow/issues/6849)
+### [Bug #6849](https://github.com/vaadin/flow-components/issues/6849)
 
 Bug scenario:
 
