@@ -5,10 +5,13 @@
 
 package com.example.gui;
 
+import com.example.gui.ConfigInfo.Status;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+
+import java.util.List;
 
 import org.dellroad.stuff.vaadin24.util.AsyncTaskStatusChangeEvent;
 import org.slf4j.Logger;
@@ -19,13 +22,10 @@ public class ExampleGrid extends Grid<ConfigInfo> implements Connectable {
 
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private final Button refreshButton = new Button("Search", e -> this.refresh());
+    private final Button refreshButton = new Button("Reload", e -> this.refresh());
 
     public ExampleGrid() {
         super(ConfigInfo.class, false);
-
-        // Initialize
-        this.setItems(new ExampleDataProvider());
 
         // Configure grid
         this.addThemeVariants(GridVariant.LUMO_COMPACT);
@@ -105,33 +105,12 @@ public class ExampleGrid extends Grid<ConfigInfo> implements Connectable {
         this.connectWhileAttached(this);
     }
 
-    @Override
-    public final ExampleDataProvider getDataProvider() {
-        return (ExampleDataProvider)super.getDataProvider();
-    }
-
     public Button getRefreshButton() {
         return this.refreshButton;
     }
 
     public void refresh() {
-        this.getDataProvider().reload();
-    }
-
-    /**
-     * Build a {@link SpinnerBars} component that lights up while this grid is reloading.
-     * Make it so that if you click on it, loading is canceled.
-     */
-    public SpinnerBars buildLoadingIndicator() {
-        final SpinnerBars spinner = new SpinnerBars();
-        this.getDataProvider().getAsyncTaskManager().addAsyncTaskStatusChangeListener(
-          e -> {
-            final boolean spin = e.getStatus() == AsyncTaskStatusChangeEvent.STARTED;
-            this.log.info("spinner: got {} -> {} spinning", this.nameFor(e), spin ? "start" : "stop");
-            spinner.setSpinning(spin);
-        });
-        spinner.addClickListener(e -> this.getDataProvider().cancel());
-        return spinner;
+        this.reload();
     }
 
     private String nameFor(AsyncTaskStatusChangeEvent<?> e) {
@@ -149,15 +128,26 @@ public class ExampleGrid extends Grid<ConfigInfo> implements Connectable {
         }
     }
 
+    public void reload() {
+        this.setItems(List.of(
+          new ConfigInfo("CHILH test.xml (r24171) + CHILH-1083", "test.foob", Status.EDITING, false, false),
+          new ConfigInfo("Flarb Flarb Flarb", "flarb.choo", Status.VIEWING, false, true),
+          new ConfigInfo("Backup Of Active Connfiguration 4/13/23", "test.blar", Status.SEALED, true, false),
+          new ConfigInfo("1 Blah blah blah blah", "blah.blah", Status.ACTIVE, false, true),
+          new ConfigInfo("2 Blah blah blah blah", "blah.blah", Status.ACTIVE, false, true),
+          new ConfigInfo("3 Blah blah blah blah", "blah.blah", Status.ACTIVE, false, true),
+          new ConfigInfo("4 Blah blah blah blah", "blah.blah", Status.ACTIVE, false, true),
+          new ConfigInfo("5 Blah blah blah blah", "blah.blah", Status.ACTIVE, false, true)));
+    }
+
 // Connectable
 
     @Override
     public void connect() {
-        this.getDataProvider().connect();
+        this.reload();
     }
 
     @Override
     public void disconnect() {
-        this.getDataProvider().disconnect();
     }
 }

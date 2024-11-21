@@ -33,15 +33,11 @@ public class ExamplePanel extends VerticalLayout {
         this.add(UIUtil.newControlBar(
           "Press to reload:",
           this.grid.getRefreshButton(),
-          this.grid.buildLoadingIndicator(),
           UIUtil.EXPANDER));
 
         // Add message grid
         this.add(this.grid);
         this.setFlexGrow(100, this.grid);
-
-        // Auto load on first connection
-        this.grid.getDataProvider().setReloadOnConnect(true);
     }
 
     protected ExampleGrid buildGrid() {
