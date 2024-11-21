@@ -6,24 +6,23 @@
 package com.example.gui;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
 
 import org.dellroad.stuff.vaadin24.util.AsyncTaskStatusChangeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("serial")
-public class ExampleGrid extends Grid<Integer> implements Connectable {
+public class ExampleGrid extends Grid<ConfigInfo> implements Connectable {
 
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final Button refreshButton = new Button("Search", e -> this.refresh());
 
     public ExampleGrid() {
-        super(Integer.class, false);
+        super(ConfigInfo.class, false);
 
         // Initialize
         this.setItems(new ExampleDataProvider());
@@ -35,16 +34,72 @@ public class ExampleGrid extends Grid<Integer> implements Connectable {
         this.setWidth("100%");
         this.setSelectionMode(Grid.SelectionMode.NONE);
 
-        // Configure grid
-        for (int i = 0; i < 10; i++) {
-            final int col = i + 1;
-            this.addColumn(
-               new ComponentRenderer<Span, Integer>(row -> new Span(String.format("Row %d, Col %d", row, col))))
-              .setKey(String.format("col%d", col))
-              .setFlexGrow(1)
-              .setHeader(String.format("Col %d", col))
-              .setWidth("100px");
-        }
+        this.addColumn(new SelfRenderer<>(ConfigInfo::propertyRunning))
+          .setKey(ConfigInfo.RUNNING_PROPERTY)
+          .setHeader("")
+          .setTextAlign(ColumnTextAlign.CENTER)
+          .setFlexGrow(0)
+          .setWidth("20px");
+
+        this.addColumn(new SelfRenderer<>(ConfigInfo::propertyHtmlName))
+          .setKey(ConfigInfo.HTML_NAME_PROPERTY)
+          .setHeader("Name")
+          .setWidth("300px")
+          .setResizable(true)
+          .setFlexGrow(2);
+
+        this.addColumn(new SelfRenderer<>(ConfigInfo::propertyUUID))
+          .setKey(ConfigInfo.UUID_PROPERTY)
+          .setHeader("UUID")
+          .setTextAlign(ColumnTextAlign.CENTER)
+          .setWidth("24em")
+          .setFlexGrow(0)
+          .setResizable(true)
+          .setVisible(false);
+
+        this.addColumn(new SelfRenderer<>(ConfigInfo::propertyStatus))
+          .setKey(ConfigInfo.STATUS_PROPERTY)
+          .setHeader("Status")
+          .setTextAlign(ColumnTextAlign.CENTER)
+          .setFlexGrow(0)
+          .setWidth("5em");
+
+        this.addColumn(ConfigInfo::propertySignedOff)
+          .setKey(ConfigInfo.SIGNED_OFF_PROPERTY)
+          .setHeader("Signoff")
+          .setTextAlign(ColumnTextAlign.CENTER)
+          .setFlexGrow(0)
+          .setWidth("6em");
+
+        this.addColumn(new SelfRenderer<>(ConfigInfo::propertyServerName))
+          .setKey(ConfigInfo.SERVER_NAME_PROPERTY)
+          .setHeader("Server")
+          .setResizable(true)
+          .setFlexGrow(0)
+          .setTextAlign(ColumnTextAlign.CENTER)
+          .setWidth("10em");
+
+        this.addColumn(ConfigInfo::propertyTimestamp)
+          .setKey(ConfigInfo.TIMESTAMP_PROPERTY)
+          .setHeader("Last Modified")
+          .setWidth("125px")
+          .setTextAlign(ColumnTextAlign.CENTER)
+          .setResizable(true)
+          .setSortable(true);
+
+        this.addColumn(new SelfRenderer<>(ConfigInfo::propertyUsername))
+          .setKey(ConfigInfo.USERNAME_PROPERTY)
+          .setHeader("User")
+          .setResizable(true)
+          .setFlexGrow(0)
+          .setTextAlign(ColumnTextAlign.CENTER)
+          .setWidth("10em");
+
+        this.addColumn(new SelfRenderer<>(ConfigInfo::propertyComment))
+          .setKey(ConfigInfo.COMMENT_PROPERTY)
+          .setHeader("Comment")
+          .setFlexGrow(3)
+          .setWidth("150px");
 
         // Connect data provider when attached, disconnect data provider when detached
         this.connectWhileAttached(this);

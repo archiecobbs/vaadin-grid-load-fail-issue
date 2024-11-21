@@ -243,6 +243,9 @@ public abstract class AbstractRoot extends VerticalLayout implements BeforeEnter
      */
     protected void updateLowerPanel() {
 
+        // Workaround for https://github.com/vaadin/flow/issues/20240
+        UI.setCurrent(this.getUI().get());
+
         // The user is authorized; build the normal lower panel
         final Component content = this.buildRootLowerPanel();
 

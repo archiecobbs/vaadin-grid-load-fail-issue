@@ -5,6 +5,7 @@
 
 package com.example.gui.support;
 
+import com.example.support.StringUtil;
 import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Unit;
@@ -19,10 +20,42 @@ import com.vaadin.flow.component.textfield.TextField;
 
 public final class UIUtil {
 
+    public static final String TITLE_ATTRIBUTE = "title";
+
     public static final Object EXPANDER = new Object();
     public static final Object NO_LABEL_MERGE = new Object();
 
     private UIUtil() {
+    }
+
+    /**
+     * Create a {@link Label} with the given string (plain text) and the given tool-tip.
+     *
+     * @param content label content
+     * @param toolTop label tool-tip
+     * @return label
+     * @throws IllegalArgumentException if {@code content} is null
+     */
+    public static Span getLabel(String content, String toolTip) {
+        Preconditions.checkArgument(content != null, "null content");
+        final Span span = new Span(content);
+        UIUtil.setToolTip(span, toolTip);
+        return span;
+    }
+
+    /**
+     * Configure the specified tool tip description on the specified component.
+     *
+     * @param component component
+     * @param toolTop tool tip, or null to remove
+     * @throws IllegalArgumentException if {@code component} is null
+     */
+    public static void setToolTip(Component component, String toolTip) {
+        Preconditions.checkArgument(component != null, "null component");
+        if (toolTip != null)
+            component.getElement().setAttribute(TITLE_ATTRIBUTE, StringUtil.escapeHtml(toolTip));
+        else
+            component.getElement().removeAttribute(TITLE_ATTRIBUTE);
     }
 
     /**
